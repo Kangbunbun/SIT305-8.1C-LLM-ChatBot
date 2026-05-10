@@ -1,62 +1,58 @@
-﻿# SIT305 8.1C LLM ChatBot App
+﻿# SIT305 Task 8.1C - LLM ChatBot App
 
-This is an Android chatbot application created for SIT305 Credit Task 8.1C.
+This project is an Android chatbot application developed for SIT305 Task 8.1C.
 
-The app allows a user to enter a username, open a chat screen, send messages to an AI chatbot, and view previous chat messages. The project uses a small Node.js backend to connect the Android app to an LLM API, so the API key is not stored inside the Android code.
+The app allows users to enter a username, open a chat screen, send messages to an AI chatbot, and view previous chat messages.
+
+The LLM integration is handled through a local Node.js backend. The Android app does not store the API key directly.
 
 ## Main Features
 
 - Username login screen
-- Chat interface with user and chatbot message bubbles
-- AI chatbot response through a backend API
-- Chat history saved locally using SQLite
-- Timestamp shown on each message bubble
-- Basic error handling when the backend is not available
+- Chat screen with user and chatbot message bubbles
+- AI-generated chatbot responses
+- Local chat history saved using SQLite
+- Timestamp displayed on each message bubble
+- User-based chat history loading
+- Basic loading/error handling for chatbot requests
+- Backend-based LLM integration to keep the API key outside the Android app
 
-## Project Structure
+## LLM ChatBot Functionality
 
-```text
-SIT305-8.1C-LLM-ChatBot/
-│
-├── app/                    # Android app source code
-├── backend/
-│   └── server.js           # Node.js backend server
-├── .env.example            # Example environment variables
-├── package.json            # Backend dependencies and start script
-└── README.md
-```
+This app includes one main LLM-powered chatbot feature.
 
-## Technologies Used
+### AI Chat Response
+
+On the chat screen, the user can type a message and tap Send.
+
+The app sends the username and message to the local backend. The backend forwards the message to the LLM API and returns an AI-generated reply.
+
+The Android app then displays the chatbot response in the chat interface and saves both the user message and chatbot response into the local SQLite database.
+
+If the backend is not available, the app displays an error message instead of crashing.
+
+## Technology Stack
 
 ### Android
 
 - Kotlin
-- XML Layouts
+- XML layouts
+- ViewBinding
 - RecyclerView
 - SQLiteOpenHelper
 - Retrofit
 - Coroutines
-- ViewBinding
 
 ### Backend
 
 - Node.js
 - Express
+- Groq API
 - dotenv
-- Groq SDK
-
-## How It Works
-
-1. The user enters a username on the login screen.
-2. The app opens the chat screen.
-3. The user sends a message.
-4. The Android app sends the message to the backend.
-5. The backend sends the message to the LLM API.
-6. The LLM response is returned to the Android app.
-7. The user message and chatbot response are saved in SQLite.
-8. When the same username logs in again, the previous chat history is loaded.
 
 ## Backend Setup
+
+The backend is required for real AI chatbot responses.
 
 Install backend dependencies:
 
@@ -64,16 +60,10 @@ Install backend dependencies:
 npm install
 ```
 
-Create a local `.env` file:
-
-```powershell
-copy .env.example .env
-```
-
-Open `.env` and add your own Groq API key:
+Create a `.env` file based on `.env.example`:
 
 ```env
-GROQ_API_KEY=your_real_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 PORT=3000
 ```
 
@@ -83,10 +73,10 @@ Start the backend:
 npm start
 ```
 
-If the backend is running correctly, it should show:
+The backend should run at:
 
 ```text
-Backend server running on http://localhost:3000
+http://localhost:3000
 ```
 
 You can test the backend with:
@@ -115,37 +105,61 @@ Invoke-RestMethod `
 
 ## Android Setup
 
-1. Open the project in Android Studio.
-2. Make sure the backend is running on port 3000.
-3. Run the app using an Android emulator.
-4. The Android app connects to the backend using:
+Open the Android project in Android Studio and run the app on an emulator.
 
-```kotlin
+The Android emulator connects to the local backend using:
+
+```text
 http://10.0.2.2:3000/
 ```
 
-`10.0.2.2` is used because the Android emulator needs this address to access `localhost` on the computer.
+This URL is configured in:
+
+```text
+app/src/main/java/com/example/chatbot/data/remote/RetrofitClient.kt
+```
+
+## Running the App
+
+Start the backend first:
+
+```powershell
+npm install
+npm start
+```
+
+Then open the Android project in Android Studio and run the app on an emulator.
+
+Use the app flow:
+
+```text
+Login -> Chat Screen -> Send Message -> Receive AI Response
+```
+
+To test chat history:
+
+```text
+Login with a username -> Send messages -> Close the app -> Open the app again -> Login with the same username
+```
+
+The previous chat messages should be loaded from SQLite.
 
 ## Security Note
 
-The real API key must be stored only in the local `.env` file.
+The real API key should only be stored in:
 
-The `.env` file is ignored by Git and should not be pushed to GitHub. Only `.env.example` is included so another user can understand which environment variables are required.
+```text
+.env
+```
 
-## Testing Checklist
+This file is ignored by Git and should not be uploaded to GitHub.
 
-Before recording the demonstration video, I tested that:
+Only this example file is included in the repository:
 
-- The backend starts successfully.
-- The `/chat` endpoint returns an AI response.
-- The Android app opens the login screen.
-- A user can enter a username and open the chat screen.
-- The user can send messages to the chatbot.
-- The chatbot returns real AI-generated responses.
-- User and chatbot messages display timestamps.
-- Chat history is saved and loaded again when logging in with the same username.
-- The app shows an error message instead of crashing if the backend is unavailable.
+```text
+.env.example
+```
 
-## Notes
+## Author
 
-This project is a simple academic implementation for the SIT305 8.1C task. The focus is on meeting the core requirements clearly: username login, chatbot interaction, local chat history, timestamps, and safe backend-based LLM integration.
+Thien Khang Nguyen
